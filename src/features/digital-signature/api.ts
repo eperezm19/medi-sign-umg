@@ -13,12 +13,5 @@ export async function signMedicalRecord(): Promise<{
   record: MedicalRecord
 }> {
   await delay(HEAVY_MUTATION_DELAY_MS)
-  useMediSignStore.getState().applySignedState()
-  const { signature, currentRecord } = useMediSignStore.getState()
-
-  if (!signature || !currentRecord) {
-    throw new Error("No se pudo firmar el expediente de demostración.")
-  }
-
-  return { signature, record: currentRecord }
+  return useMediSignStore.getState().signCurrentRecord()
 }

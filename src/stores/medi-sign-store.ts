@@ -4,6 +4,11 @@ import { createJSONStorage, persist } from "zustand/middleware"
 import type { MedicalRecord } from "@/features/medical-record"
 import type { KeyPair } from "@/features/key-generation"
 import type { DigitalSignature } from "@/features/digital-signature"
+import {
+  buildDigitalSignature,
+  buildFictitiousSha256,
+  buildSignedRecord,
+} from "@/features/digital-signature/lib/build-signature"
 import type { VerificationResult } from "@/features/signature-verification"
 import type { ModifiedField } from "@/features/document-alteration"
 import { demoScenario } from "@/shared/data/demo-scenario"
@@ -40,6 +45,10 @@ type MediSignActions = {
   setFlowStep: (step: FlowStep) => void
   loadUnsignedRecord: () => void
   createUnsignedRecord: (record: MedicalRecord) => void
+  signCurrentRecord: () => {
+    record: MedicalRecord
+    signature: DigitalSignature
+  }
   applySignedState: () => void
   applyAlteredState: () => void
   resetDemo: () => void
@@ -65,7 +74,7 @@ const initialState = (): MediSignState => {
 
 export const useMediSignStore = create<MediSignStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...initialState(),
 
       setCurrentRecord: (currentRecord) => set({ currentRecord }),
@@ -109,11 +118,51 @@ export const useMediSignStore = create<MediSignStore>()(
         })
       },
 
+      signCurrentRecord: () => {
+        const { currentRecord, keyPair } = get()
+
+        if (!currentRecord) {
+          throw new Error("No hay un expediente para firmar.")
+        }
+
+        if (!keyPair) {
+          throw new Error("Debes generar las llaves antes de firmar.")
+        }
+
+        const signedAt = new Date().toISOString()
+        const contentHash = buildFictitiousSha256(currentRecord)
+        const signedRecord = buildSignedRecord(
+          currentRecord,
+          contentHash,
+          signedAt
+        )
+        const signature = buildDigitalSignature({
+          record: signedRecord,
+          keyPair,
+          contentHash,
+          signedAt,
+        })
+        const signedOriginalRecord = structuredClone(signedRecord)
+
+        set({
+          currentRecord: signedRecord,
+          signedOriginalRecord,
+          originalHash: contentHash,
+          currentHash: contentHash,
+          signature,
+          verificationResult: null,
+          modifiedFields: [],
+          flowStep: "firma-digital",
+        })
+
+        return { record: signedRecord, signature }
+      },
+
       applySignedState: () => {
         const { signedRecord, keyPair, signature } = demoScenario
         set({
           currentRecord: signedRecord,
-          signedOriginalRecord: signedRecord,
+          signedOriginalRecord: structuredClone(signedRecord),
           keyPair,
           originalHash: signedRecord.contentHash,
           currentHash: signedRecord.contentHash,

@@ -5,3 +5,10 @@ export {
   useDigitalSignatureQuery,
   useSignRecordMutation,
 } from "./hooks"
+export {
+  buildDigitalSignature,
+  buildFictitiousSha256,
+  buildFictitiousSignatureBase64,
+  buildSignedRecord,
+} from "./lib/build-signature"
+export { SignRecordPanel } from "./components/sign-record-panel"
