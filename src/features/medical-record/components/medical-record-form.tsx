@@ -15,7 +15,7 @@ import {
   medicalRecordSchema,
   type MedicalRecordFormValues,
 } from "@/features/medical-record/schema"
-import { Badge } from "@/shared/components/ui/badge"
+import { MedicalRecordStatusBadge } from "@/features/medical-record/components/medical-record-status-badge"
 import { Button } from "@/shared/components/ui/button"
 import {
   Card,
@@ -99,9 +99,7 @@ export function MedicalRecordForm() {
           </CardDescription>
         </div>
         {currentRecord ? (
-          <Badge variant="outline" className="uppercase">
-            {currentRecord.status}
-          </Badge>
+          <MedicalRecordStatusBadge status={currentRecord.status} />
         ) : null}
       </CardHeader>
 

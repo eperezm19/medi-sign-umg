@@ -18,7 +18,7 @@ export async function verifySignature(): Promise<VerificationResult> {
   setFlowStep("verificacion")
 
   if (currentRecord) {
-    setCurrentRecord({ ...currentRecord, status: "signed" })
+    setCurrentRecord({ ...currentRecord, status: "verified" })
   }
 
   return result

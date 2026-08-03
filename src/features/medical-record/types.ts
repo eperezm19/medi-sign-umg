@@ -2,6 +2,7 @@ export type MedicalRecordStatus =
   | "draft"
   | "unsigned"
   | "signed"
+  | "verified"
   | "altered"
   | "verification_failed"
 
