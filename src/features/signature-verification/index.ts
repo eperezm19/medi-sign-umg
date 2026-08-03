@@ -13,3 +13,9 @@ export {
   useVerifyAlteredDocumentMutation,
   useVerifySignatureMutation,
 } from "./hooks"
+export {
+  VERIFICATION_OK,
+  buildValidVerificationResult,
+} from "./lib/build-verification"
+export { ValidVerificationPanel } from "./components/valid-verification-panel"
+export { VerificacionView } from "./components/verificacion-view"

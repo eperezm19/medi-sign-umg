@@ -10,18 +10,7 @@ export async function fetchVerificationResult(): Promise<VerificationResult | nu
 
 export async function verifySignature(): Promise<VerificationResult> {
   await delay(HEAVY_MUTATION_DELAY_MS)
-  const result = demoScenario.verificationSuccess
-  const { setVerificationResult, setFlowStep, setCurrentRecord, currentRecord } =
-    useMediSignStore.getState()
-
-  setVerificationResult(result)
-  setFlowStep("verificacion")
-
-  if (currentRecord) {
-    setCurrentRecord({ ...currentRecord, status: "verified" })
-  }
-
-  return result
+  return useMediSignStore.getState().verifyCurrentSignature()
 }
 
 export async function verifyAlteredDocument(): Promise<VerificationResult> {

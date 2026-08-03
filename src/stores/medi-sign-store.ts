@@ -10,6 +10,7 @@ import {
   buildSignedRecord,
 } from "@/features/digital-signature/lib/build-signature"
 import type { VerificationResult } from "@/features/signature-verification"
+import { buildValidVerificationResult } from "@/features/signature-verification/lib/build-verification"
 import type { ModifiedField } from "@/features/document-alteration"
 import { demoScenario } from "@/shared/data/demo-scenario"
 
@@ -49,6 +50,7 @@ type MediSignActions = {
     record: MedicalRecord
     signature: DigitalSignature
   }
+  verifyCurrentSignature: () => VerificationResult
   applySignedState: () => void
   applyAlteredState: () => void
   resetDemo: () => void
@@ -156,6 +158,59 @@ export const useMediSignStore = create<MediSignStore>()(
         })
 
         return { record: signedRecord, signature }
+      },
+
+      verifyCurrentSignature: () => {
+        const {
+          currentRecord,
+          signature,
+          originalHash,
+          currentHash,
+        } = get()
+
+        if (!currentRecord) {
+          throw new Error("No hay un expediente para verificar.")
+        }
+
+        if (!signature) {
+          throw new Error("Firma el expediente primero.")
+        }
+
+        if (!originalHash || !currentHash) {
+          throw new Error("No hay hashes disponibles para verificar.")
+        }
+
+        if (
+          currentRecord.status === "altered" ||
+          currentRecord.status === "verification_failed" ||
+          originalHash !== currentHash
+        ) {
+          throw new Error(
+            "El documento fue modificado; usa la verificación de alteración."
+          )
+        }
+
+        if (
+          currentRecord.status !== "signed" &&
+          currentRecord.status !== "verified"
+        ) {
+          throw new Error("El expediente debe estar firmado para verificarse.")
+        }
+
+        const result = buildValidVerificationResult({
+          record: currentRecord,
+          signature,
+          originalHash,
+          currentHash,
+        })
+
+        set({
+          verificationResult: result,
+          currentRecord: { ...currentRecord, status: "verified" },
+          flowStep: "verificacion",
+        })
+
+        return result
       },
 
       applySignedState: () => {

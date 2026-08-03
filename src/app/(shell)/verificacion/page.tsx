@@ -1,21 +1,11 @@
 import type { Metadata } from "next"
 
-import { StepPlaceholder } from "@/shared/components/layout/step-placeholder"
-import { DEMO_STEPS } from "@/shared/config/demo-navigation"
-
-const step = DEMO_STEPS[2]
+import { VerificacionView } from "@/features/signature-verification/components/verificacion-view"
 
 export const metadata: Metadata = {
-  title: step.label,
+  title: "Verificación",
 }
 
 export default function VerificacionPage() {
-  return (
-    <StepPlaceholder
-      stepId={step.id}
-      title={step.label}
-      description={step.description}
-      icon={step.icon}
-    />
-  )
+  return <VerificacionView />
 }
