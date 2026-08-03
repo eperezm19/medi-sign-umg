@@ -7,3 +7,8 @@ export {
   mockOriginalRecord,
   mockSignedRecord,
 } from "./mocks"
+export { createMedicalRecord, fetchMedicalRecord } from "./api"
+export {
+  useCreateMedicalRecordMutation,
+  useMedicalRecordQuery,
+} from "./hooks"
