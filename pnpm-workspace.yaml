@@ -1,6 +1,7 @@
 packages: []
 
 minimumReleaseAge: 0
+confirmModulesPurge: false
 
 allowBuilds:
   sharp: true

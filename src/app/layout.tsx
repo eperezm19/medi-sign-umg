@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { Geist_Mono, Inter } from "next/font/google"
 
 import "./globals.css"
@@ -10,6 +11,15 @@ const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 })
+
+export const metadata: Metadata = {
+  title: {
+    default: "MediSign UMG",
+    template: "%s · MediSign UMG",
+  },
+  description:
+    "Prototipo académico de firma digital para expedientes médicos — Universidad Mariano Gálvez.",
+}
 
 export default function RootLayout({
   children,
