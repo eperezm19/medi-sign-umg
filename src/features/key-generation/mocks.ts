@@ -6,6 +6,7 @@ export const mockKeyPair: KeyPair = {
   id: DEMO_KEY_PAIR_ID,
   ownerName: "Dr. Carlos Ruiz",
   algorithm: "RSA-PSS",
+  keySize: 2048,
   publicKeyPem: `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0demoPublicKeyUMG2026
 MediSignAcademicPrototypeOnlyNotARealKey000111222333444555666777888

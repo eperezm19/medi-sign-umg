@@ -1,6 +1,6 @@
 import type { KeyPair } from "@/features/key-generation/types"
 import { demoScenario } from "@/shared/data/demo-scenario"
-import { delay, LIGHT_MUTATION_DELAY_MS, QUERY_DELAY_MS } from "@/shared/lib/delay"
+import { delay, HEAVY_MUTATION_DELAY_MS, QUERY_DELAY_MS } from "@/shared/lib/delay"
 import { useMediSignStore } from "@/stores/medi-sign-store"
 
 export async function fetchKeyPair(): Promise<KeyPair | null> {
@@ -9,7 +9,7 @@ export async function fetchKeyPair(): Promise<KeyPair | null> {
 }
 
 export async function generateKeyPair(): Promise<KeyPair> {
-  await delay(LIGHT_MUTATION_DELAY_MS)
+  await delay(HEAVY_MUTATION_DELAY_MS)
   const { setKeyPair, setFlowStep } = useMediSignStore.getState()
   setKeyPair(demoScenario.keyPair)
   setFlowStep("firma-digital")
