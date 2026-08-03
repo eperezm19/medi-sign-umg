@@ -39,6 +39,7 @@ type MediSignActions = {
   setModifiedFields: (fields: ModifiedField[]) => void
   setFlowStep: (step: FlowStep) => void
   loadUnsignedRecord: () => void
+  createUnsignedRecord: (record: MedicalRecord) => void
   applySignedState: () => void
   applyAlteredState: () => void
   resetDemo: () => void
@@ -87,6 +88,20 @@ export const useMediSignStore = create<MediSignStore>()(
           keyPair: null,
           originalHash: null,
           currentHash: original.contentHash,
+          signature: null,
+          verificationResult: null,
+          modifiedFields: [],
+          flowStep: "expediente",
+        })
+      },
+
+      createUnsignedRecord: (record) => {
+        set({
+          currentRecord: { ...record, status: "unsigned" },
+          signedOriginalRecord: null,
+          keyPair: null,
+          originalHash: null,
+          currentHash: record.contentHash,
           signature: null,
           verificationResult: null,
           modifiedFields: [],

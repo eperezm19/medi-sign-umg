@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import { createMedicalRecord, fetchMedicalRecord } from "@/features/medical-record/api"
+import type { MedicalRecordFormValues } from "@/features/medical-record/schema"
 import { allDemoQueryKeys, queryKeys } from "@/shared/api/query-keys"
 
 export function useMedicalRecordQuery() {
@@ -16,7 +17,7 @@ export function useCreateMedicalRecordMutation() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: createMedicalRecord,
+    mutationFn: (values: MedicalRecordFormValues) => createMedicalRecord(values),
     onSuccess: async () => {
       await Promise.all(
         allDemoQueryKeys.map((queryKey) =>

@@ -1,21 +1,16 @@
 import type { Metadata } from "next"
 
-import { StepPlaceholder } from "@/shared/components/layout/step-placeholder"
-import { DEMO_STEPS } from "@/shared/config/demo-navigation"
-
-const step = DEMO_STEPS[0]
+import { MedicalRecordForm } from "@/features/medical-record/components/medical-record-form"
+import { PageContainer } from "@/shared/components/layout/page-container"
 
 export const metadata: Metadata = {
-  title: step.label,
+  title: "Expediente",
 }
 
 export default function ExpedientePage() {
   return (
-    <StepPlaceholder
-      stepId={step.id}
-      title={step.label}
-      description={step.description}
-      icon={step.icon}
-    />
+    <PageContainer className="max-w-4xl">
+      <MedicalRecordForm />
+    </PageContainer>
   )
 }
