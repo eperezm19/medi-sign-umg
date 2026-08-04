@@ -14,8 +14,11 @@ export {
   useVerifySignatureMutation,
 } from "./hooks"
 export {
+  VERIFICATION_FAILURE,
   VERIFICATION_OK,
+  buildInvalidVerificationResult,
   buildValidVerificationResult,
 } from "./lib/build-verification"
 export { ValidVerificationPanel } from "./components/valid-verification-panel"
+export { InvalidVerificationPanel } from "./components/invalid-verification-panel"
 export { VerificacionView } from "./components/verificacion-view"

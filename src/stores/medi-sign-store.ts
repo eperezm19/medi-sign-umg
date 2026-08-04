@@ -10,7 +10,10 @@ import {
   buildSignedRecord,
 } from "@/features/digital-signature/lib/build-signature"
 import type { VerificationResult } from "@/features/signature-verification"
-import { buildValidVerificationResult } from "@/features/signature-verification/lib/build-verification"
+import {
+  buildInvalidVerificationResult,
+  buildValidVerificationResult,
+} from "@/features/signature-verification/lib/build-verification"
 import type { ModifiedField } from "@/features/document-alteration"
 import type { AlterationFormValues } from "@/features/document-alteration/schema"
 import {
@@ -56,6 +59,7 @@ type MediSignActions = {
     signature: DigitalSignature
   }
   verifyCurrentSignature: () => VerificationResult
+  verifyAlteredCurrentDocument: () => VerificationResult
   alterCurrentRecord: (values: AlterationFormValues) => {
     record: MedicalRecord
     modifiedFields: ModifiedField[]
@@ -216,6 +220,58 @@ export const useMediSignStore = create<MediSignStore>()(
         set({
           verificationResult: result,
           currentRecord: { ...currentRecord, status: "verified" },
+          flowStep: "verificacion",
+        })
+
+        return result
+      },
+
+      verifyAlteredCurrentDocument: () => {
+        const {
+          currentRecord,
+          signature,
+          originalHash,
+          currentHash,
+          modifiedFields,
+        } = get()
+
+        if (!currentRecord) {
+          throw new Error("No hay un expediente para verificar.")
+        }
+
+        if (!signature) {
+          throw new Error("No hay una firma digital asociada al expediente.")
+        }
+
+        if (!originalHash || !currentHash) {
+          throw new Error("No hay hashes disponibles para verificar.")
+        }
+
+        const isAltered =
+          currentRecord.status === "altered" ||
+          currentRecord.status === "verification_failed" ||
+          originalHash !== currentHash
+
+        if (!isAltered) {
+          throw new Error(
+            "El documento no está alterado; usa la verificación de firma válida."
+          )
+        }
+
+        const result = buildInvalidVerificationResult({
+          record: currentRecord,
+          signature,
+          originalHash,
+          currentHash,
+          modifiedFields,
+        })
+
+        set({
+          verificationResult: result,
+          currentRecord: {
+            ...currentRecord,
+            status: "verification_failed",
+          },
           flowStep: "verificacion",
         })
 
