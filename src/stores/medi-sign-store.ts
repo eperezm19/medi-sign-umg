@@ -12,6 +12,11 @@ import {
 import type { VerificationResult } from "@/features/signature-verification"
 import { buildValidVerificationResult } from "@/features/signature-verification/lib/build-verification"
 import type { ModifiedField } from "@/features/document-alteration"
+import type { AlterationFormValues } from "@/features/document-alteration/schema"
+import {
+  buildAlteredRecord,
+  detectModifiedFields,
+} from "@/features/document-alteration/lib/build-alteration"
 import { demoScenario } from "@/shared/data/demo-scenario"
 
 export type FlowStep =
@@ -51,6 +56,10 @@ type MediSignActions = {
     signature: DigitalSignature
   }
   verifyCurrentSignature: () => VerificationResult
+  alterCurrentRecord: (values: AlterationFormValues) => {
+    record: MedicalRecord
+    modifiedFields: ModifiedField[]
+  }
   applySignedState: () => void
   applyAlteredState: () => void
   resetDemo: () => void
@@ -211,6 +220,55 @@ export const useMediSignStore = create<MediSignStore>()(
         })
 
         return result
+      },
+
+      alterCurrentRecord: (values) => {
+        const { currentRecord, signature, signedOriginalRecord, originalHash } =
+          get()
+
+        if (!currentRecord) {
+          throw new Error("No hay un expediente para alterar.")
+        }
+
+        if (!signature) {
+          throw new Error("Debes firmar el expediente antes de alterarlo.")
+        }
+
+        const original = signedOriginalRecord ?? currentRecord
+
+        if (
+          currentRecord.status !== "signed" &&
+          currentRecord.status !== "verified" &&
+          currentRecord.status !== "altered"
+        ) {
+          throw new Error(
+            "El expediente debe estar firmado o verificado para alterarlo."
+          )
+        }
+
+        const modifiedFields = detectModifiedFields(original, values)
+
+        if (modifiedFields.length === 0) {
+          throw new Error("No hay cambios respecto al documento original firmado.")
+        }
+
+        const altered = buildAlteredRecord(currentRecord, values)
+
+        if (originalHash && altered.contentHash === originalHash) {
+          throw new Error(
+            "El hash actual no cambió; ajusta el contenido antes de continuar."
+          )
+        }
+
+        set({
+          currentRecord: altered,
+          currentHash: altered.contentHash,
+          modifiedFields,
+          verificationResult: null,
+          flowStep: "alteracion",
+        })
+
+        return { record: altered, modifiedFields }
       },
 
       applySignedState: () => {
