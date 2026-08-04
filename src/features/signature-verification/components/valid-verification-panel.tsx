@@ -1,17 +1,13 @@
 "use client"
 
-import {
-  BadgeCheckIcon,
-  CheckCircle2Icon,
-  CircleIcon,
-  Loader2Icon,
-  ShieldCheckIcon,
-} from "lucide-react"
+import { BadgeCheckIcon, Loader2Icon, ShieldCheckIcon } from "lucide-react"
 import { toast } from "sonner"
 
 import { MedicalRecordStatusBadge } from "@/features/medical-record/components/medical-record-status-badge"
 import { useVerifySignatureMutation } from "@/features/signature-verification/hooks"
 import { VERIFICATION_OK } from "@/features/signature-verification/lib/build-verification"
+import { DemoEmptyState } from "@/shared/components/demo/demo-empty-state"
+import { DemoRequirement } from "@/shared/components/demo/demo-requirement"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import {
@@ -24,26 +20,6 @@ import {
 } from "@/shared/components/ui/card"
 import { cn } from "@/shared/lib/utils"
 import { useMediSignStore } from "@/stores/medi-sign-store"
-
-function Requirement({ ok, label }: { ok: boolean; label: string }) {
-  return (
-    <div
-      className={cn(
-        "flex items-center gap-2 rounded-lg border px-3 py-2 text-sm",
-        ok
-          ? "border-emerald-600/30 bg-emerald-500/10 text-emerald-900 dark:text-emerald-100"
-          : "border-border bg-muted/40 text-muted-foreground"
-      )}
-    >
-      {ok ? (
-        <CheckCircle2Icon className="size-4 shrink-0" aria-hidden />
-      ) : (
-        <CircleIcon className="size-4 shrink-0" aria-hidden />
-      )}
-      {label}
-    </div>
-  )
-}
 
 function ResultRow({
   ok,
@@ -144,7 +120,7 @@ export function ValidVerificationPanel() {
 
       <CardContent className="space-y-5">
         <div className="grid gap-2 sm:grid-cols-2">
-          <Requirement
+          <DemoRequirement
             ok={hasSignature}
             label={
               hasSignature
@@ -152,7 +128,7 @@ export function ValidVerificationPanel() {
                 : "Firma el expediente primero"
             }
           />
-          <Requirement
+          <DemoRequirement
             ok={hashesMatch && !isAltered}
             label={
               isAltered
@@ -171,9 +147,9 @@ export function ValidVerificationPanel() {
         ) : null}
 
         {!hasSignature && !isAltered ? (
-          <div className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
+          <DemoEmptyState className="py-8">
             Firma el expediente primero para habilitar la verificación.
-          </div>
+          </DemoEmptyState>
         ) : null}
 
         {showValidResult ? (
@@ -230,10 +206,10 @@ export function ValidVerificationPanel() {
         ) : null}
 
         {canVerify && !showValidResult ? (
-          <div className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
+          <DemoEmptyState className="py-8">
             El expediente está firmado y sin alteraciones. Ejecuta la
             verificación para confirmar integridad.
-          </div>
+          </DemoEmptyState>
         ) : null}
       </CardContent>
 

@@ -1,13 +1,8 @@
 "use client"
 
-import { useEffect } from "react"
-
-import { useMediSignStore } from "@/stores/medi-sign-store"
+import { useStoreHydration } from "@/shared/hooks/use-store-hydration"
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    void useMediSignStore.persist.rehydrate()
-  }, [])
-
+  useStoreHydration()
   return children
 }

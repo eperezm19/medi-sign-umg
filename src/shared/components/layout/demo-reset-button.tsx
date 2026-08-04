@@ -66,11 +66,13 @@ export function DemoResetButton({
         ) : (
           <RotateCcwIcon data-icon="inline-start" />
         )}
-        Reiniciar demo
+        {isPending ? "Reiniciando…" : "Reiniciar demo"}
       </Button>
-
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <AlertDialogContent size="default" className="sm:max-w-md">
+        <AlertDialogContent
+          size="default"
+          className="max-w-[calc(100%-2rem)] sm:max-w-md"
+        >
           <AlertDialogHeader>
             <AlertDialogTitle>¿Reiniciar la demostración?</AlertDialogTitle>
             <AlertDialogDescription>

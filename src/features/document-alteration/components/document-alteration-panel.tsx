@@ -16,6 +16,7 @@ import {
   type AlterationFormValues,
 } from "@/features/document-alteration/schema"
 import { MedicalRecordStatusBadge } from "@/features/medical-record/components/medical-record-status-badge"
+import { DemoEmptyState } from "@/shared/components/demo/demo-empty-state"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -63,7 +64,8 @@ export function DocumentAlterationPanel() {
     Boolean(signedOriginalRecord || currentRecord) &&
     (currentRecord?.status === "signed" ||
       currentRecord?.status === "verified" ||
-      currentRecord?.status === "altered")
+      currentRecord?.status === "altered" ||
+      currentRecord?.status === "verification_failed")
 
   const baseline = signedOriginalRecord ?? currentRecord
 
@@ -143,10 +145,11 @@ export function DocumentAlterationPanel() {
         <form onSubmit={form.handleSubmit(handleRequestConfirm)} noValidate>
           <CardContent className="space-y-5">
             {!canAlter ? (
-              <div className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
-                Firma el expediente primero para habilitar la alteración
-                simulada.
-              </div>
+              <DemoEmptyState className="py-8">
+                {!signature
+                  ? "Firma el expediente primero para habilitar la alteración simulada."
+                  : "El expediente debe estar firmado, verificado o alterado para continuar."}
+              </DemoEmptyState>
             ) : (
               <>
                 <FieldGroup className="gap-5">
@@ -279,14 +282,17 @@ export function DocumentAlterationPanel() {
               ) : (
                 <FileWarningIcon data-icon="inline-start" />
               )}
-              Aplicar alteración
+              {isPending ? "Aplicando…" : "Aplicar alteración"}
             </Button>
           </CardFooter>
         </form>
       </Card>
 
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <AlertDialogContent size="default" className="sm:max-w-md">
+        <AlertDialogContent
+          size="default"
+          className="max-w-[calc(100%-2rem)] sm:max-w-md"
+        >
           <AlertDialogHeader>
             <AlertDialogTitle>¿Confirmar alteración?</AlertDialogTitle>
             <AlertDialogDescription>

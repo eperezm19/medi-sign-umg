@@ -71,6 +71,7 @@ function NavLinks({
             ) : (
               <span
                 aria-disabled="true"
+                aria-label={`Paso bloqueado: ${step.label}. Completa el paso anterior para continuar.`}
                 title="Completa el paso anterior para continuar"
                 className={itemClassName}
               >
@@ -106,7 +107,7 @@ export function SiteHeader() {
         </Link>
 
         <div className="flex items-center gap-2">
-          <DemoResetButton className="hidden sm:inline-flex" />
+          <DemoResetButton className="hidden md:inline-flex" />
 
           <nav aria-label="Navegación principal" className="flex items-center gap-2">
             <NavLinks />

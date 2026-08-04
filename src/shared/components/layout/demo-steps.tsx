@@ -10,7 +10,7 @@ import { cn } from "@/shared/lib/utils"
 export function DemoSteps({ className }: { className?: string }) {
   const pathname = usePathname()
   const currentIndex = getStepIndex(pathname)
-  const { maxUnlockedIndex, canAccess } = useDemoStepAccess()
+  const { hasHydrated, maxUnlockedIndex, canAccess } = useDemoStepAccess()
 
   return (
     <nav
@@ -23,7 +23,8 @@ export function DemoSteps({ className }: { className?: string }) {
           const isActive = index === currentIndex
           const isUnlocked = canAccess(step.href)
           const isLocked = !isUnlocked
-          const isCompleted = isUnlocked && index < maxUnlockedIndex && !isActive
+          const isCompleted =
+            hasHydrated && isUnlocked && index < maxUnlockedIndex && !isActive
 
           const content = (
             <>
@@ -72,6 +73,7 @@ export function DemoSteps({ className }: { className?: string }) {
               {isLocked ? (
                 <span
                   aria-disabled="true"
+                  aria-label={`Paso bloqueado: ${step.label}. Completa el paso anterior para continuar.`}
                   title="Completa el paso anterior para continuar"
                   className={itemClassName}
                 >

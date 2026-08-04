@@ -1,11 +1,13 @@
 "use client"
 
-import { CheckCircle2Icon, CircleIcon, FilePenLine, Loader2Icon } from "lucide-react"
+import { FilePenLine, Loader2Icon } from "lucide-react"
 import { toast } from "sonner"
 
 import { useSignRecordMutation } from "@/features/digital-signature/hooks"
 import { formatDateTime } from "@/features/medical-record/lib/format"
 import { MedicalRecordStatusBadge } from "@/features/medical-record/components/medical-record-status-badge"
+import { DemoEmptyState } from "@/shared/components/demo/demo-empty-state"
+import { DemoRequirement } from "@/shared/components/demo/demo-requirement"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import {
@@ -17,34 +19,7 @@ import {
   CardTitle,
 } from "@/shared/components/ui/card"
 import { Textarea } from "@/shared/components/ui/textarea"
-import { cn } from "@/shared/lib/utils"
 import { useMediSignStore } from "@/stores/medi-sign-store"
-
-function Requirement({
-  ok,
-  label,
-}: {
-  ok: boolean
-  label: string
-}) {
-  return (
-    <div
-      className={cn(
-        "flex items-center gap-2 rounded-lg border px-3 py-2 text-sm",
-        ok
-          ? "border-emerald-600/30 bg-emerald-500/10 text-emerald-900 dark:text-emerald-100"
-          : "border-border bg-muted/40 text-muted-foreground"
-      )}
-    >
-      {ok ? (
-        <CheckCircle2Icon className="size-4 shrink-0" aria-hidden />
-      ) : (
-        <CircleIcon className="size-4 shrink-0" aria-hidden />
-      )}
-      {label}
-    </div>
-  )
-}
 
 export function SignRecordPanel() {
   const currentRecord = useMediSignStore((state) => state.currentRecord)
@@ -99,7 +74,7 @@ export function SignRecordPanel() {
 
       <CardContent className="space-y-5">
         <div className="grid gap-2 sm:grid-cols-2">
-          <Requirement
+          <DemoRequirement
             ok={hasRecord}
             label={
               hasRecord
@@ -107,7 +82,7 @@ export function SignRecordPanel() {
                 : "Falta crear el expediente"
             }
           />
-          <Requirement
+          <DemoRequirement
             ok={hasKeys}
             label={
               hasKeys
@@ -145,8 +120,14 @@ export function SignRecordPanel() {
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm font-medium">Firma digital</p>
+              <label
+                htmlFor="digital-signature-value"
+                className="text-sm font-medium"
+              >
+                Firma digital
+              </label>
               <Textarea
+                id="digital-signature-value"
                 readOnly
                 value={signature.signatureBase64}
                 rows={4}
@@ -160,11 +141,11 @@ export function SignRecordPanel() {
             </p>
           </div>
         ) : (
-          <div className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
+          <DemoEmptyState className="py-8">
             {canSign
               ? "Listo para firmar. Se generará el hash, la firma y se cambiará el estado a SIGNED."
               : "Completa el expediente y genera las llaves para habilitar la firma."}
-          </div>
+          </DemoEmptyState>
         )}
       </CardContent>
 

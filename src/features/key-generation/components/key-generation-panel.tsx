@@ -12,6 +12,7 @@ import {
 import { toast } from "sonner"
 
 import { useGenerateKeysMutation } from "@/features/key-generation/hooks"
+import { DemoEmptyState } from "@/shared/components/demo/demo-empty-state"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import {
@@ -70,6 +71,7 @@ function KeyBlock({
   onCopy,
   copyDisabled,
   trailing,
+  textareaId,
 }: {
   title: string
   value: string
@@ -77,11 +79,14 @@ function KeyBlock({
   onCopy: () => void
   copyDisabled?: boolean
   trailing?: React.ReactNode
+  textareaId: string
 }) {
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm font-medium">{title}</p>
+        <label htmlFor={textareaId} className="text-sm font-medium">
+          {title}
+        </label>
         <div className="flex items-center gap-1.5">
           {trailing}
           <Button
@@ -97,6 +102,7 @@ function KeyBlock({
         </div>
       </div>
       <Textarea
+        id={textareaId}
         readOnly
         value={
           hidden
@@ -135,9 +141,12 @@ export function KeyGenerationPanel() {
       toast.success("Par de llaves generado", {
         description: `${generated.ownerName} · RSA ${generated.keySize} bits`,
       })
-    } catch {
+    } catch (error) {
       toast.error("No se pudieron generar las llaves", {
-        description: "Intenta de nuevo en unos segundos.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Intenta de nuevo en unos segundos.",
       })
     }
   }
@@ -202,31 +211,26 @@ export function KeyGenerationPanel() {
         </div>
 
         {!keyPair && !isPending ? (
-          <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-4 py-10 text-center">
-            <KeyRoundIcon className="size-8 text-muted-foreground" aria-hidden />
-            <p className="max-w-sm text-sm text-muted-foreground">
-              Aún no hay un par de llaves. Genera uno simulado para continuar
-              con la firma digital del expediente.
-            </p>
-          </div>
+          <DemoEmptyState icon={KeyRoundIcon}>
+            Aún no hay un par de llaves. Genera uno simulado para continuar con
+            la firma digital del expediente.
+          </DemoEmptyState>
         ) : null}
 
         {isPending ? (
-          <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-4 py-10 text-center">
-            <Loader2Icon
-              className="size-8 animate-spin text-primary"
-              aria-hidden
-            />
-            <p className="text-sm text-muted-foreground">
-              Generando par de llaves RSA-2048…
-            </p>
-          </div>
+          <DemoEmptyState
+            icon={Loader2Icon}
+            className="[&_svg]:animate-spin [&_svg]:text-primary"
+          >
+            Generando par de llaves RSA-2048…
+          </DemoEmptyState>
         ) : null}
 
         {keyPair && !isPending ? (
           <div className="space-y-5">
             <KeyBlock
               title="Llave pública"
+              textareaId="rsa-public-key"
               value={keyPair.publicKeyPem}
               onCopy={() => handleCopy("public")}
               trailing={
@@ -241,6 +245,7 @@ export function KeyGenerationPanel() {
 
             <KeyBlock
               title="Llave privada"
+              textareaId="rsa-private-key"
               value={keyPair.privateKeyPem}
               hidden={!showPrivateKey}
               onCopy={() => handleCopy("private")}

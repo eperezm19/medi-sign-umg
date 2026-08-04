@@ -1,17 +1,13 @@
 "use client"
 
-import {
-  AlertTriangleIcon,
-  CheckCircle2Icon,
-  CircleIcon,
-  Loader2Icon,
-  ShieldAlertIcon,
-} from "lucide-react"
+import { AlertTriangleIcon, Loader2Icon, ShieldAlertIcon } from "lucide-react"
 import { toast } from "sonner"
 
 import { MedicalRecordStatusBadge } from "@/features/medical-record/components/medical-record-status-badge"
 import { useVerifyAlteredDocumentMutation } from "@/features/signature-verification/hooks"
 import { VERIFICATION_FAILURE } from "@/features/signature-verification/lib/build-verification"
+import { DemoEmptyState } from "@/shared/components/demo/demo-empty-state"
+import { DemoRequirement } from "@/shared/components/demo/demo-requirement"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import {
@@ -22,28 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card"
-import { cn } from "@/shared/lib/utils"
 import { useMediSignStore } from "@/stores/medi-sign-store"
-
-function Requirement({ ok, label }: { ok: boolean; label: string }) {
-  return (
-    <div
-      className={cn(
-        "flex items-center gap-2 rounded-lg border px-3 py-2 text-sm",
-        ok
-          ? "border-amber-600/30 bg-amber-500/10 text-amber-950 dark:text-amber-50"
-          : "border-border bg-muted/40 text-muted-foreground"
-      )}
-    >
-      {ok ? (
-        <CheckCircle2Icon className="size-4 shrink-0" aria-hidden />
-      ) : (
-        <CircleIcon className="size-4 shrink-0" aria-hidden />
-      )}
-      {label}
-    </div>
-  )
-}
 
 function FailureRow({
   title,
@@ -96,7 +71,7 @@ export function InvalidVerificationPanel() {
   async function handleVerify() {
     try {
       await verifyMutation.mutateAsync()
-      toast.error("Verificación fallida", {
+      toast.warning("Verificación fallida", {
         description: VERIFICATION_FAILURE,
       })
     } catch (error) {
@@ -128,7 +103,8 @@ export function InvalidVerificationPanel() {
 
       <CardContent className="space-y-5">
         <div className="grid gap-2 sm:grid-cols-2">
-          <Requirement
+          <DemoRequirement
+            tone="warning"
             ok={hasSignature}
             label={
               hasSignature
@@ -136,7 +112,8 @@ export function InvalidVerificationPanel() {
                 : "Se requiere una firma previa"
             }
           />
-          <Requirement
+          <DemoRequirement
+            tone="warning"
             ok={isAltered && hashesDiffer}
             label={
               hashesDiffer
@@ -147,9 +124,9 @@ export function InvalidVerificationPanel() {
         </div>
 
         {!isAltered ? (
-          <div className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
+          <DemoEmptyState className="py-8">
             Altera el expediente firmado para habilitar esta verificación.
-          </div>
+          </DemoEmptyState>
         ) : null}
 
         {showInvalidResult ? (
@@ -230,10 +207,10 @@ export function InvalidVerificationPanel() {
         ) : null}
 
         {canVerify && !showInvalidResult ? (
-          <div className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
+          <DemoEmptyState className="py-8">
             El expediente está alterado. Ejecuta la verificación para confirmar
             el fallo de integridad.
-          </div>
+          </DemoEmptyState>
         ) : null}
       </CardContent>
 

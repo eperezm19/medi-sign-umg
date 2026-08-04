@@ -295,7 +295,8 @@ export const useMediSignStore = create<MediSignStore>()(
         if (
           currentRecord.status !== "signed" &&
           currentRecord.status !== "verified" &&
-          currentRecord.status !== "altered"
+          currentRecord.status !== "altered" &&
+          currentRecord.status !== "verification_failed"
         ) {
           throw new Error(
             "El expediente debe estar firmado o verificado para alterarlo."

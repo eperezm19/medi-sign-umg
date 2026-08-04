@@ -52,6 +52,7 @@ export function HomeDemoSteps() {
             ) : (
               <div
                 aria-disabled="true"
+                aria-label={`Paso bloqueado: ${step.label}. Completa el paso anterior para continuar.`}
                 title="Completa el paso anterior para continuar"
                 className={className}
               >

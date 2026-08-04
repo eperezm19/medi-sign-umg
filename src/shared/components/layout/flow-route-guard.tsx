@@ -12,10 +12,17 @@ import { useDemoStepAccess } from "@/shared/hooks/use-demo-step-access"
 export function FlowRouteGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
-  const { maxUnlockedIndex } = useDemoStepAccess()
+  const { hasHydrated, maxUnlockedIndex } = useDemoStepAccess()
+
+  const stepIndex = getStepIndex(pathname)
+  const isBlocked =
+    hasHydrated && stepIndex !== -1 && stepIndex > maxUnlockedIndex
 
   useEffect(() => {
-    const stepIndex = getStepIndex(pathname)
+    if (!hasHydrated) {
+      return
+    }
+
     if (stepIndex === -1) {
       return
     }
@@ -24,7 +31,25 @@ export function FlowRouteGuard({ children }: { children: React.ReactNode }) {
       const fallback = DEMO_STEPS[maxUnlockedIndex]?.href ?? "/expediente"
       router.replace(fallback)
     }
-  }, [pathname, maxUnlockedIndex, router])
+  }, [pathname, hasHydrated, maxUnlockedIndex, router, stepIndex])
+
+  if (!hasHydrated) {
+    return (
+      <div
+        className="flex flex-1 items-center justify-center px-4 py-16"
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <p className="text-sm text-muted-foreground">
+          Restaurando la demostración…
+        </p>
+      </div>
+    )
+  }
+
+  if (isBlocked) {
+    return null
+  }
 
   return children
 }

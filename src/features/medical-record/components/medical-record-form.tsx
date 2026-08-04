@@ -49,6 +49,7 @@ const emptyValues: MedicalRecordFormValues = {
 
 export function MedicalRecordForm() {
   const currentRecord = useMediSignStore((state) => state.currentRecord)
+  const signature = useMediSignStore((state) => state.signature)
   const createMutation = useCreateMedicalRecordMutation()
 
   const form = useForm<MedicalRecordFormValues>({
@@ -66,7 +67,13 @@ export function MedicalRecordForm() {
     form.reset(recordToFormValues(currentRecord))
   }, [currentRecord, form])
 
+  const isLocked = Boolean(signature)
+  const fieldsDisabled = createMutation.isPending || isLocked
+
   function handleLoadExample() {
+    if (isLocked) {
+      return
+    }
     form.reset(getExampleFormValues())
     toast.message("Datos de ejemplo cargados", {
       description: "Puedes editarlos antes de guardar el expediente.",
@@ -74,14 +81,20 @@ export function MedicalRecordForm() {
   }
 
   async function onSubmit(values: MedicalRecordFormValues) {
+    if (isLocked) {
+      return
+    }
     try {
       const record = await createMutation.mutateAsync(values)
       toast.success("Expediente guardado como UNSIGNED", {
         description: `${record.patientName} · ${record.id}`,
       })
-    } catch {
+    } catch (error) {
       toast.error("No se pudo guardar el expediente", {
-        description: "Intenta de nuevo en unos segundos.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Intenta de nuevo en unos segundos.",
       })
     }
   }
@@ -104,7 +117,16 @@ export function MedicalRecordForm() {
       </CardHeader>
 
       <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
-        <CardContent>
+        <CardContent className="space-y-5">
+          {isLocked ? (
+            <div
+              role="status"
+              className="rounded-xl border border-amber-600/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-950 dark:text-amber-100"
+            >
+              El expediente ya está firmado. Usa “Reiniciar demo” para editarlo
+              de nuevo desde el inicio.
+            </div>
+          ) : null}
           <FieldGroup className="gap-5">
             <div className="grid gap-5 sm:grid-cols-2">
               <Controller
@@ -120,7 +142,7 @@ export function MedicalRecordForm() {
                       id="patientName"
                       placeholder="Ana Lucía Méndez"
                       aria-invalid={fieldState.invalid}
-                      disabled={isPending}
+                      disabled={fieldsDisabled}
                     />
                     <FieldError errors={[fieldState.error]} />
                   </Field>
@@ -140,7 +162,7 @@ export function MedicalRecordForm() {
                       id="recordId"
                       placeholder="exp-umg-2026-001"
                       aria-invalid={fieldState.invalid}
-                      disabled={isPending}
+                      disabled={fieldsDisabled}
                     />
                     <FieldError errors={[fieldState.error]} />
                   </Field>
@@ -160,7 +182,7 @@ export function MedicalRecordForm() {
                       id="birthDate"
                       type="date"
                       aria-invalid={fieldState.invalid}
-                      disabled={isPending}
+                      disabled={fieldsDisabled}
                     />
                     <FieldError errors={[fieldState.error]} />
                   </Field>
@@ -178,7 +200,7 @@ export function MedicalRecordForm() {
                       id="createdAt"
                       type="datetime-local"
                       aria-invalid={fieldState.invalid}
-                      disabled={isPending}
+                      disabled={fieldsDisabled}
                     />
                     <FieldError errors={[fieldState.error]} />
                   </Field>
@@ -198,7 +220,7 @@ export function MedicalRecordForm() {
                     rows={3}
                     placeholder="Hipertensión arterial esencial (I10)"
                     aria-invalid={fieldState.invalid}
-                    disabled={isPending}
+                    disabled={fieldsDisabled}
                   />
                   <FieldError errors={[fieldState.error]} />
                 </Field>
@@ -217,7 +239,7 @@ export function MedicalRecordForm() {
                     rows={3}
                     placeholder="Control ambulatorio y seguimiento..."
                     aria-invalid={fieldState.invalid}
-                    disabled={isPending}
+                    disabled={fieldsDisabled}
                   />
                   <FieldError errors={[fieldState.error]} />
                 </Field>
@@ -236,7 +258,7 @@ export function MedicalRecordForm() {
                     rows={3}
                     placeholder="Notas clínicas adicionales..."
                     aria-invalid={fieldState.invalid}
-                    disabled={isPending}
+                    disabled={fieldsDisabled}
                   />
                   <FieldError errors={[fieldState.error]} />
                 </Field>
@@ -257,7 +279,7 @@ export function MedicalRecordForm() {
                       id="physicianName"
                       placeholder="Dr. Carlos Ruiz"
                       aria-invalid={fieldState.invalid}
-                      disabled={isPending}
+                      disabled={fieldsDisabled}
                     />
                     <FieldError errors={[fieldState.error]} />
                   </Field>
@@ -277,7 +299,7 @@ export function MedicalRecordForm() {
                       id="physicianLicense"
                       placeholder="COLMED-UMG-45821"
                       aria-invalid={fieldState.invalid}
-                      disabled={isPending}
+                      disabled={fieldsDisabled}
                     />
                     <FieldError errors={[fieldState.error]} />
                   </Field>
@@ -292,12 +314,12 @@ export function MedicalRecordForm() {
             type="button"
             variant="outline"
             onClick={handleLoadExample}
-            disabled={isPending}
+            disabled={fieldsDisabled}
           >
             <SparklesIcon data-icon="inline-start" />
             Cargar datos de ejemplo
           </Button>
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" disabled={fieldsDisabled}>
             {isPending ? (
               <Loader2Icon className="animate-spin" data-icon="inline-start" />
             ) : (

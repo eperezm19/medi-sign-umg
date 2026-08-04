@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 import {
   AlertTriangleIcon,
+  CheckCircle2Icon,
   GitCompareArrowsIcon,
   Loader2Icon,
 } from "lucide-react"
@@ -10,6 +11,7 @@ import {
 import { useComparisonQuery } from "@/features/document-comparison/hooks"
 import { MedicalRecordStatusBadge } from "@/features/medical-record/components/medical-record-status-badge"
 import type { MedicalRecord } from "@/features/medical-record/types"
+import { DemoEmptyState } from "@/shared/components/demo/demo-empty-state"
 import { Badge } from "@/shared/components/ui/badge"
 import {
   Card,
@@ -177,7 +179,29 @@ export function DocumentComparisonPanel() {
   const hashChanged = !hashesMatch
 
   const canCompare = Boolean(originalRecord && currentRecord)
-  const isLoading = comparisonQuery.isPending && !canCompare
+  const isLoading =
+    (!comparisonQuery.isFetched && comparisonQuery.isPending) ||
+    (comparisonQuery.isPending && !canCompare)
+
+  if (comparisonQuery.isError && !canCompare) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Comparación de documentos</CardTitle>
+          <CardDescription>
+            No se pudo cargar la comparación.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DemoEmptyState icon={AlertTriangleIcon}>
+            {comparisonQuery.error instanceof Error
+              ? comparisonQuery.error.message
+              : "Ocurrió un error al consultar la comparación. Intenta recargar."}
+          </DemoEmptyState>
+        </CardContent>
+      </Card>
+    )
+  }
 
   if (isLoading) {
     return (
@@ -202,16 +226,10 @@ export function DocumentComparisonPanel() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-4 py-12 text-center">
-            <GitCompareArrowsIcon
-              className="size-8 text-muted-foreground"
-              aria-hidden
-            />
-            <p className="max-w-md text-sm text-muted-foreground">
-              Necesitas un documento original firmado y la versión actual del
-              expediente para visualizar las diferencias.
-            </p>
-          </div>
+          <DemoEmptyState icon={GitCompareArrowsIcon}>
+            Necesitas un documento original firmado y la versión actual del
+            expediente para visualizar las diferencias.
+          </DemoEmptyState>
         </CardContent>
       </Card>
     )
@@ -288,7 +306,11 @@ export function DocumentComparisonPanel() {
             : "border-emerald-600/30 bg-emerald-500/10 text-emerald-900 dark:text-emerald-100"
         )}
       >
-        <AlertTriangleIcon className="mt-0.5 size-4 shrink-0" aria-hidden />
+        {hashChanged ? (
+          <AlertTriangleIcon className="mt-0.5 size-4 shrink-0" aria-hidden />
+        ) : (
+          <CheckCircle2Icon className="mt-0.5 size-4 shrink-0" aria-hidden />
+        )}
         <p>
           Cualquier modificación del contenido genera un hash distinto y hace
           inválida la firma digital anterior.
