@@ -27,5 +27,6 @@ export async function fetchComparison(): Promise<ComparisonResult> {
 
 export async function resetDemoScenario(): Promise<void> {
   await delay(LIGHT_MUTATION_DELAY_MS)
+  await useMediSignStore.persist.clearStorage()
   useMediSignStore.getState().resetDemo()
 }

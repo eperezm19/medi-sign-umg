@@ -1,9 +1,9 @@
 import Link from "next/link"
 import { ArrowRight, ShieldCheck } from "lucide-react"
 
+import { HomeDemoSteps } from "@/shared/components/layout/home-demo-steps"
 import { PageContainer } from "@/shared/components/layout/page-container"
 import { Button } from "@/shared/components/ui/button"
-import { DEMO_STEPS } from "@/shared/config/demo-navigation"
 
 export default function HomePage() {
   return (
@@ -39,38 +39,12 @@ export default function HomePage() {
             Pasos de la demostración
           </h2>
           <p className="text-sm text-muted-foreground">
-            Usa la barra superior o selecciona un paso para continuar.
+            Usa la barra superior o selecciona un paso para continuar. Los
+            pasos posteriores se desbloquean al completar el anterior.
           </p>
         </div>
 
-        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {DEMO_STEPS.map((step, index) => {
-            const Icon = step.icon
-            return (
-              <li key={step.id}>
-                <Link
-                  href={step.href}
-                  className="flex h-full flex-col gap-3 rounded-2xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-primary/5"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <Icon className="size-4" aria-hidden />
-                    </span>
-                    <span className="text-xs font-medium text-muted-foreground">
-                      Paso {index + 1}
-                    </span>
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="font-medium">{step.label}</h3>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      {step.description}
-                    </p>
-                  </div>
-                </Link>
-              </li>
-            )
-          })}
-        </ol>
+        <HomeDemoSteps />
       </section>
     </PageContainer>
   )

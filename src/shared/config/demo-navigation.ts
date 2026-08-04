@@ -1,3 +1,4 @@
+import type { MedicalRecordStatus } from "@/features/medical-record/types"
 import {
   FilePenLine,
   FileSearch,
@@ -14,6 +15,13 @@ export type DemoStep = {
   shortLabel: string
   description: string
   icon: LucideIcon
+}
+
+export type DemoProgressState = {
+  currentRecord: { status: MedicalRecordStatus } | null
+  signature: unknown | null
+  verificationResult: unknown | null
+  modifiedFields: unknown[]
 }
 
 export const DEMO_STEPS: DemoStep[] = [
@@ -63,4 +71,43 @@ export function getStepIndex(pathname: string): number {
   return DEMO_STEPS.findIndex(
     (step) => pathname === step.href || pathname.startsWith(`${step.href}/`)
   )
+}
+
+export function getMaxUnlockedStepIndex(state: DemoProgressState): number {
+  let max = 0
+
+  if (state.currentRecord) {
+    max = 1
+  }
+
+  if (state.signature) {
+    max = 2
+  }
+
+  if (state.verificationResult) {
+    max = 3
+  }
+
+  const status = state.currentRecord?.status
+  const isAltered =
+    state.modifiedFields.length > 0 ||
+    status === "altered" ||
+    status === "verification_failed"
+
+  if (isAltered) {
+    max = 4
+  }
+
+  return max
+}
+
+export function canAccessStep(
+  pathnameOrHref: string,
+  maxUnlockedIndex: number
+): boolean {
+  const index = getStepIndex(pathnameOrHref)
+  if (index === -1) {
+    return true
+  }
+  return index <= maxUnlockedIndex
 }
