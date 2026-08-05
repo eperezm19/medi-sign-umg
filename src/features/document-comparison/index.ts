@@ -1,5 +1,0 @@
-export type { ComparisonResult } from "./types"
-export { fetchComparison, resetDemoScenario } from "./api"
-export { useComparisonQuery } from "./hooks"
-export { DocumentComparisonPanel } from "./components/document-comparison-panel"
-export { ComparacionView } from "./components/comparacion-view"

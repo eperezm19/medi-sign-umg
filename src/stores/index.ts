@@ -1,5 +1,1 @@
-export {
-  useMediSignStore,
-  type FlowStep,
-  type MediSignStore,
-} from "./medi-sign-store"
+// Stores de dominio pendientes de implementación (useMedicalFileStore).

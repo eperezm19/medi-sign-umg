@@ -1,9 +1,19 @@
 import Link from "next/link"
 import { ArrowRight, ShieldCheck } from "lucide-react"
 
-import { HomeDemoSteps } from "@/shared/components/layout/home-demo-steps"
 import { PageContainer } from "@/shared/components/layout/page-container"
 import { Button } from "@/shared/components/ui/button"
+
+const FLOW_STEPS = [
+  "Cargar archivo",
+  "Generar llaves",
+  "Firmar",
+  "Descargar",
+  "Verificar original",
+  "Modificar externamente",
+  "Volver a cargar",
+  "Detectar alteración",
+] as const
 
 export default function HomePage() {
   return (
@@ -15,19 +25,26 @@ export default function HomePage() {
           </span>
           <div className="space-y-3">
             <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Demostración de firma digital clínica
+              MediSign
             </h1>
             <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-              Recorre un flujo guiado para firmar un expediente médico de
-              ejemplo, verificar su integridad, simular una alteración y
-              comparar resultados. Pensado como apoyo académico, no como
-              sistema hospitalario.
+              Prototipo académico de firma y verificación de archivos médicos.
+              Demuestra cómo una firma digital protege la integridad de un
+              documento: si el contenido no cambia, la verificación es válida;
+              si se altera después de firmar, la verificación falla.
             </p>
           </div>
-          <div>
-            <Button size="lg" render={<Link href="/expediente" />}>
-              Iniciar demostración
+          <div className="flex flex-wrap gap-3">
+            <Button size="lg" render={<Link href="/firmar" />}>
+              Firmar archivo
               <ArrowRight data-icon="inline-end" />
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              render={<Link href="/verificar" />}
+            >
+              Verificar archivo
             </Button>
           </div>
         </div>
@@ -36,15 +53,28 @@ export default function HomePage() {
       <section className="space-y-4">
         <div className="space-y-1">
           <h2 className="text-lg font-semibold tracking-tight">
-            Pasos de la demostración
+            Flujo de la práctica
           </h2>
           <p className="text-sm text-muted-foreground">
-            Usa la barra superior o selecciona un paso para continuar. Los
-            pasos posteriores se desbloquean al completar el anterior.
+            Ocho pasos para demostrar integridad documental con firma separada
+            (.sig). Las pantallas de firma y verificación están pendientes de
+            implementación.
           </p>
         </div>
 
-        <HomeDemoSteps />
+        <ol className="grid gap-2 sm:grid-cols-2">
+          {FLOW_STEPS.map((label, index) => (
+            <li
+              key={label}
+              className="flex items-center gap-3 rounded-xl border bg-card px-4 py-3 text-sm"
+            >
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted text-xs font-semibold text-muted-foreground">
+                {index + 1}
+              </span>
+              {label}
+            </li>
+          ))}
+        </ol>
       </section>
     </PageContainer>
   )

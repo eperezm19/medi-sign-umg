@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     template: "%s · MediSign UMG",
   },
   description:
-    "Prototipo académico de firma digital para expedientes médicos — Universidad Mariano Gálvez.",
+    "Prototipo académico de firma y verificación de archivos médicos — Universidad Mariano Gálvez.",
 }
 
 export default function RootLayout({

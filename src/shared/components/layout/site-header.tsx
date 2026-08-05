@@ -3,9 +3,8 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
-import { MenuIcon, ShieldCheck } from "lucide-react"
+import { FileCheck2, FilePenLine, Home, MenuIcon, ShieldCheck } from "lucide-react"
 
-import { DemoResetButton } from "@/shared/components/layout/demo-reset-button"
 import { Button } from "@/shared/components/ui/button"
 import {
   Sheet,
@@ -15,9 +14,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/shared/components/ui/sheet"
-import { DEMO_STEPS } from "@/shared/config/demo-navigation"
-import { useDemoStepAccess } from "@/shared/hooks/use-demo-step-access"
 import { cn } from "@/shared/lib/utils"
+
+const NAV_ITEMS = [
+  { href: "/", label: "Inicio", icon: Home },
+  { href: "/firmar", label: "Firmar archivo", icon: FilePenLine },
+  { href: "/verificar", label: "Verificar archivo", icon: FileCheck2 },
+] as const
 
 function NavLinks({
   onNavigate,
@@ -29,7 +32,6 @@ function NavLinks({
   orientation?: "horizontal" | "vertical"
 }) {
   const pathname = usePathname()
-  const { canAccess } = useDemoStepAccess()
 
   return (
     <ul
@@ -40,45 +42,30 @@ function NavLinks({
         className
       )}
     >
-      {DEMO_STEPS.map((step) => {
+      {NAV_ITEMS.map((item) => {
         const isActive =
-          pathname === step.href || pathname.startsWith(`${step.href}/`)
-        const Icon = step.icon
-        const isUnlocked = canAccess(step.href)
-
-        const itemClassName = cn(
-          "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-          orientation === "vertical" && "w-full",
-          isActive
-            ? "bg-primary/10 text-primary"
-            : isUnlocked
-              ? "text-muted-foreground hover:bg-muted hover:text-foreground"
-              : "cursor-not-allowed text-muted-foreground/50"
-        )
+          item.href === "/"
+            ? pathname === "/"
+            : pathname === item.href || pathname.startsWith(`${item.href}/`)
+        const Icon = item.icon
 
         return (
-          <li key={step.id}>
-            {isUnlocked ? (
-              <Link
-                href={step.href}
-                onClick={onNavigate}
-                aria-current={isActive ? "page" : undefined}
-                className={itemClassName}
-              >
-                <Icon className="size-4 opacity-80" aria-hidden />
-                {step.label}
-              </Link>
-            ) : (
-              <span
-                aria-disabled="true"
-                aria-label={`Paso bloqueado: ${step.label}. Completa el paso anterior para continuar.`}
-                title="Completa el paso anterior para continuar"
-                className={itemClassName}
-              >
-                <Icon className="size-4 opacity-80" aria-hidden />
-                {step.label}
-              </span>
-            )}
+          <li key={item.href}>
+            <Link
+              href={item.href}
+              onClick={onNavigate}
+              aria-current={isActive ? "page" : undefined}
+              className={cn(
+                "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                orientation === "vertical" && "w-full",
+                isActive
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              <Icon className="size-4 opacity-80" aria-hidden />
+              {item.label}
+            </Link>
           </li>
         )
       })}
@@ -101,51 +88,43 @@ export function SiteHeader() {
               MediSign UMG
             </span>
             <span className="hidden text-[11px] text-muted-foreground sm:block">
-              Firma digital de expedientes
+              Firma digital de archivos médicos
             </span>
           </span>
         </Link>
 
-        <div className="flex items-center gap-2">
-          <DemoResetButton className="hidden md:inline-flex" />
+        <nav aria-label="Navegación principal" className="flex items-center gap-2">
+          <NavLinks />
 
-          <nav aria-label="Navegación principal" className="flex items-center gap-2">
-            <NavLinks />
-
-            <Sheet open={open} onOpenChange={setOpen}>
-              <SheetTrigger
-                render={
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="md:hidden"
-                    aria-label="Abrir menú de navegación"
-                  />
-                }
-              >
-                <MenuIcon />
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[min(100%,20rem)]">
-                <SheetHeader>
-                  <SheetTitle>Navegación</SheetTitle>
-                  <SheetDescription>
-                    Recorre los pasos de la demostración académica.
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="space-y-4 px-2 pb-4">
-                  <NavLinks
-                    orientation="vertical"
-                    onNavigate={() => setOpen(false)}
-                  />
-                  <DemoResetButton
-                    className="w-full"
-                    onResetComplete={() => setOpen(false)}
-                  />
-                </div>
-              </SheetContent>
-            </Sheet>
-          </nav>
-        </div>
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger
+              render={
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="md:hidden"
+                  aria-label="Abrir menú de navegación"
+                />
+              }
+            >
+              <MenuIcon />
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[min(100%,20rem)]">
+              <SheetHeader>
+                <SheetTitle>Navegación</SheetTitle>
+                <SheetDescription>
+                  Flujo académico de firma y verificación de archivos.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="px-2 pb-4">
+                <NavLinks
+                  orientation="vertical"
+                  onNavigate={() => setOpen(false)}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
+        </nav>
       </div>
     </header>
   )
