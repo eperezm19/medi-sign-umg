@@ -10,7 +10,7 @@ clínico.
 
 - Next.js 16 + TypeScript
 - Tailwind CSS 4 + shadcn/ui
-- Zustand (+ Persist, pendiente)
+- Zustand (+ Persist)
 - TanStack Query
 - Lucide React
 - Sonner
@@ -20,7 +20,7 @@ clínico.
 ```
 src/
 ├── app/                      # Rutas: /, /firmar, /verificar
-├── features/                 # Dominios (pendientes de implementar)
+├── features/
 │   ├── medical-file-upload/
 │   ├── key-pair-generation/
 │   ├── file-signing/
@@ -31,7 +31,7 @@ src/
 │   └── hash-comparison/
 ├── shared/                   # UI, hooks y utilidades compartidas
 ├── providers/                # Providers de la app
-└── stores/                   # Stores Zustand (pendiente: useMedicalFileStore)
+└── stores/                   # useMedicalFileStore
 ```
 
 ## Scripts
@@ -42,11 +42,3 @@ pnpm build      # Build de producción
 pnpm lint       # ESLint
 pnpm typecheck  # TypeScript
 ```
-
-## Componentes shadcn/ui
-
-```bash
-pnpm dlx shadcn@latest add button
-```
-
-Los componentes se generan en `src/shared/components/ui`.

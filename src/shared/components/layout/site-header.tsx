@@ -1,10 +1,10 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
 import { useState } from "react"
-import { FileCheck2, FilePenLine, Home, MenuIcon, ShieldCheck } from "lucide-react"
+import { MenuIcon, ShieldCheck } from "lucide-react"
 
+import { AppNavigation } from "@/shared/components/app-navigation"
 import { Button } from "@/shared/components/ui/button"
 import {
   Sheet,
@@ -14,64 +14,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/shared/components/ui/sheet"
-import { cn } from "@/shared/lib/utils"
-
-const NAV_ITEMS = [
-  { href: "/", label: "Inicio", icon: Home },
-  { href: "/firmar", label: "Firmar archivo", icon: FilePenLine },
-  { href: "/verificar", label: "Verificar archivo", icon: FileCheck2 },
-] as const
-
-function NavLinks({
-  onNavigate,
-  className,
-  orientation = "horizontal",
-}: {
-  onNavigate?: () => void
-  className?: string
-  orientation?: "horizontal" | "vertical"
-}) {
-  const pathname = usePathname()
-
-  return (
-    <ul
-      className={cn(
-        orientation === "horizontal"
-          ? "hidden items-center gap-1 md:flex"
-          : "flex flex-col gap-1",
-        className
-      )}
-    >
-      {NAV_ITEMS.map((item) => {
-        const isActive =
-          item.href === "/"
-            ? pathname === "/"
-            : pathname === item.href || pathname.startsWith(`${item.href}/`)
-        const Icon = item.icon
-
-        return (
-          <li key={item.href}>
-            <Link
-              href={item.href}
-              onClick={onNavigate}
-              aria-current={isActive ? "page" : undefined}
-              className={cn(
-                "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                orientation === "vertical" && "w-full",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              <Icon className="size-4 opacity-80" aria-hidden />
-              {item.label}
-            </Link>
-          </li>
-        )
-      })}
-    </ul>
-  )
-}
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
@@ -94,7 +36,7 @@ export function SiteHeader() {
         </Link>
 
         <nav aria-label="Navegación principal" className="flex items-center gap-2">
-          <NavLinks />
+          <AppNavigation />
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
@@ -117,7 +59,7 @@ export function SiteHeader() {
                 </SheetDescription>
               </SheetHeader>
               <div className="px-2 pb-4">
-                <NavLinks
+                <AppNavigation
                   orientation="vertical"
                   onNavigate={() => setOpen(false)}
                 />

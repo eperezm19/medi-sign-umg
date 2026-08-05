@@ -1,1 +1,4 @@
-// Stores de dominio pendientes de implementación (useMedicalFileStore).
+export {
+  useMedicalFileStore,
+  type MedicalFileStore,
+} from "./medical-file.store"

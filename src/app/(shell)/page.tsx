@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { ArrowRight, ShieldCheck } from "lucide-react"
 
+import { AcademicWarning } from "@/shared/components/academic-warning"
 import { PageContainer } from "@/shared/components/layout/page-container"
 import { Button } from "@/shared/components/ui/button"
 
@@ -34,6 +35,10 @@ export default function HomePage() {
               si se altera después de firmar, la verificación falla.
             </p>
           </div>
+          <AcademicWarning>
+            Utilice únicamente archivos ficticios. Este prototipo no debe
+            procesar información médica real.
+          </AcademicWarning>
           <div className="flex flex-wrap gap-3">
             <Button size="lg" render={<Link href="/firmar" />}>
               Firmar archivo
@@ -56,9 +61,8 @@ export default function HomePage() {
             Flujo de la práctica
           </h2>
           <p className="text-sm text-muted-foreground">
-            Ocho pasos para demostrar integridad documental con firma separada
-            (.sig). Las pantallas de firma y verificación están pendientes de
-            implementación.
+            Ocho pasos para demostrar integridad documental con una firma
+            separada (.sig) y comparación de hashes.
           </p>
         </div>
 

@@ -4,6 +4,6 @@ export function delay(ms: number): Promise<void> {
   })
 }
 
-export const QUERY_DELAY_MS = 500
-export const LIGHT_MUTATION_DELAY_MS = 700
-export const HEAVY_MUTATION_DELAY_MS = 1100
+export const QUERY_DELAY_MS = 600
+export const LIGHT_MUTATION_DELAY_MS = 600
+export const HEAVY_MUTATION_DELAY_MS = 1500
