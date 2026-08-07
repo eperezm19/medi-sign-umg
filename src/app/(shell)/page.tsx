@@ -29,10 +29,9 @@ export default function HomePage() {
               MediSign
             </h1>
             <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-              Prototipo académico de firma y verificación de archivos médicos.
-              Demuestra cómo una firma digital protege la integridad de un
-              documento: si el contenido no cambia, la verificación es válida;
-              si se altera después de firmar, la verificación falla.
+              Laboratorio académico de firma y verificación real de archivos
+              médicos con OpenSSL. Si el contenido no cambia, la verificación es
+              válida; si se altera después de firmar, la verificación falla.
             </p>
           </div>
           <AcademicWarning>

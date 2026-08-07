@@ -19,7 +19,7 @@ export function ResetPracticeButton() {
       variant="outline"
       destructive
       title="¿Reiniciar la práctica?"
-      description="Se limpiará el estado local, los archivos simulados y los resultados de verificación. Volverá al paso de carga."
+      description="Se limpiará el estado local de la práctica, las llaves en memoria y los resultados de verificación. Volverá al paso de carga."
       confirmLabel="Reiniciar"
       onConfirm={async () => {
         resetPractice()

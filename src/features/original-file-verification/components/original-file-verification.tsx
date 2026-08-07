@@ -33,7 +33,12 @@ export function OriginalFileVerification() {
   const mutation = useVerifyOriginalFileMutation()
   const [stageIndex, setStageIndex] = useState(0)
 
-  const canVerify = Boolean(originalFile && signature && keyPair)
+  const canVerify = Boolean(
+    originalFile &&
+      originalFile.bytes.length > 0 &&
+      signature &&
+      keyPair?.publicKey
+  )
 
   useEffect(() => {
     if (!mutation.isPending) {

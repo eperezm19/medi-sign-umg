@@ -32,7 +32,9 @@ export function AlteredFileVerification() {
   const mutation = useVerifyAlteredFileMutation()
   const [stageIndex, setStageIndex] = useState(0)
 
-  const canVerify = Boolean(alteredFile && signature)
+  const canVerify = Boolean(
+    alteredFile && alteredFile.bytes.length > 0 && signature
+  )
 
   useEffect(() => {
     if (!mutation.isPending) {

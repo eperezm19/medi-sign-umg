@@ -34,8 +34,8 @@ export function useUploadMedicalFileMutation() {
       )
       toast.success("Archivo médico cargado")
     },
-    onError: () => {
-      toast.error("No se pudo cargar el archivo")
+    onError: (error: Error) => {
+      toast.error(error.message || "No se pudo cargar el archivo")
     },
   })
 }
@@ -53,8 +53,8 @@ export function useUploadDemoMedicalFileMutation() {
       )
       toast.success("Archivo de ejemplo cargado")
     },
-    onError: () => {
-      toast.error("No se pudo cargar el archivo de ejemplo")
+    onError: (error: Error) => {
+      toast.error(error.message || "No se pudo cargar el archivo de ejemplo")
     },
   })
 }

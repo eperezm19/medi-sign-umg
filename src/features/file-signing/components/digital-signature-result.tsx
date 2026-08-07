@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card"
-import { formatDateTime } from "@/shared/lib/file-utils"
+import { formatBytes, formatDateTime } from "@/shared/lib/file-utils"
 import { useMedicalFileStore } from "@/stores/medical-file.store"
 
 export function DigitalSignatureResult() {
@@ -31,8 +31,8 @@ export function DigitalSignatureResult() {
           <FileProcessStatusBadge status="SIGNED" />
         </div>
         <CardDescription>
-          La firma se genera como archivo separado (.sig) y no modifica el
-          archivo médico original.
+          La firma se genera como archivo binario separado (.sig) con OpenSSL y
+          no modifica el archivo médico original.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 text-sm">
@@ -47,11 +47,15 @@ export function DigitalSignatureResult() {
           </div>
           <div>
             <dt className="text-muted-foreground">Algoritmo</dt>
-            <dd className="font-medium">RSA-SHA256</dd>
+            <dd className="font-medium">SHA-256</dd>
           </div>
           <div>
             <dt className="text-muted-foreground">Fecha de firma</dt>
             <dd className="font-medium">{formatDateTime(signedAt)}</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground">Tamaño de la firma</dt>
+            <dd className="font-medium">{formatBytes(signature.byteLength)}</dd>
           </div>
         </dl>
 
@@ -66,12 +70,10 @@ export function DigitalSignatureResult() {
         </div>
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between gap-2">
-            <h3 className="font-medium">Firma digital</h3>
-            <CopyButton value={signature} />
-          </div>
-          <p className="break-all rounded-lg border bg-muted/40 p-3 font-mono text-xs">
-            {signature}
+          <h3 className="font-medium">Firma digital</h3>
+          <p className="rounded-lg border bg-muted/40 p-3 text-xs text-muted-foreground">
+            Archivo binario generado por OpenSSL ({signatureFileName}).
+            Descarguelo desde la sección de archivos generados.
           </p>
         </div>
       </CardContent>

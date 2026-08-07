@@ -140,7 +140,9 @@ export function AlteredFileUpload() {
                 <dd>{formatDateTime(alteredFile.uploadedAt)}</dd>
               </div>
             </dl>
-            <FilePreview content={alteredFile.content} />
+            {alteredFile.content ? (
+              <FilePreview content={alteredFile.content} />
+            ) : null}
           </div>
         ) : null}
       </CardContent>

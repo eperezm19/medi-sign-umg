@@ -39,7 +39,13 @@ export function GeneratedFilesPanel() {
   const [pendingArtifact, setPendingArtifact] =
     useState<DownloadableArtifact | null>(null)
 
-  if (!originalFile || !signature || !signatureFileName || !keyPair) {
+  if (
+    !originalFile ||
+    originalFile.bytes.length === 0 ||
+    !signature ||
+    !signatureFileName ||
+    !keyPair?.publicKey
+  ) {
     return null
   }
 
@@ -56,7 +62,7 @@ export function GeneratedFilesPanel() {
       name: signatureFileName,
       type: "Firma (.sig)",
       description: "Firma digital separada generada sobre el hash SHA-256.",
-      sizeLabel: formatBytes(new Blob([signature]).size),
+      sizeLabel: formatBytes(signature.byteLength),
     },
     {
       id: "publicKey",
@@ -70,7 +76,7 @@ export function GeneratedFilesPanel() {
       name: "llave_privada.pem",
       type: "Llave privada",
       description: "Solo para fines académicos. No debe compartirse.",
-      sizeLabel: formatBytes(new Blob([keyPair.privateKey]).size),
+      sizeLabel: formatBytes(new Blob([keyPair.privateKey || ""]).size),
       requiresWarning: true,
     },
   ]
@@ -89,8 +95,9 @@ export function GeneratedFilesPanel() {
       <CardHeader>
         <CardTitle>Archivos generados</CardTitle>
         <CardDescription>
-          Descargue el archivo médico, la firma y las llaves simuladas. No hay
-          almacenamiento en servidor.
+          Descargue el archivo médico, la firma .sig y las llaves PEM generadas
+          con OpenSSL. Los temporales del servidor se eliminan tras cada
+          operación.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -107,7 +114,7 @@ export function GeneratedFilesPanel() {
                   {artifact.description}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Tamaño simulado: {artifact.sizeLabel}
+                  Tamaño: {artifact.sizeLabel}
                 </p>
               </div>
 
@@ -116,7 +123,7 @@ export function GeneratedFilesPanel() {
                   open={privateDialogOpen}
                   onOpenChange={setPrivateDialogOpen}
                   title="Descargar llave privada"
-                  description="La llave privada no debe compartirse. Esta descarga se habilita únicamente por tratarse de una práctica académica."
+                  description="La llave privada se proporciona únicamente para fines académicos y no debe compartirse en un entorno real."
                   confirmLabel="Descargar de todos modos"
                   pending={pendingArtifact === "privateKey"}
                   destructive

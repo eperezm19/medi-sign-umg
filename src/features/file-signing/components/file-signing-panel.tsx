@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Loader2 } from "lucide-react"
 
 import { DigitalSignatureResult } from "@/features/file-signing/components/digital-signature-result"
-import { useSignMedicalFileMutation } from "@/features/file-signing/hooks"
+import { useSignFileMutation } from "@/features/file-signing/hooks"
 import { ConfirmationDialog } from "@/shared/components/confirmation-dialog"
 import { FileProcessStatusBadge } from "@/shared/components/file-process-status-badge"
 import { LoadingSimulation } from "@/shared/components/loading-simulation"
@@ -30,11 +30,16 @@ export function FileSigningPanel() {
   const keyPair = useMedicalFileStore((s) => s.keyPair)
   const signature = useMedicalFileStore((s) => s.signature)
   const status = useMedicalFileStore((s) => s.status)
-  const mutation = useSignMedicalFileMutation()
+  const mutation = useSignFileMutation()
   const [stageIndex, setStageIndex] = useState(0)
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  const canSign = Boolean(originalFile && keyPair && !signature)
+  const canSign = Boolean(
+    originalFile &&
+      originalFile.bytes.length > 0 &&
+      keyPair?.privateKey &&
+      !signature
+  )
 
   useEffect(() => {
     if (!mutation.isPending) {
@@ -60,7 +65,7 @@ export function FileSigningPanel() {
             <FileProcessStatusBadge status={status} />
           </div>
           <CardDescription>
-            Hash SHA-256 · Firma RSA-SHA256 · archivo de firma separado
+            Hash SHA-256 · Firma RSA-SHA256 · OpenSSL dgst -sign
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -72,7 +77,7 @@ export function FileSigningPanel() {
             <div>
               <dt className="text-muted-foreground">Llaves</dt>
               <dd className="font-medium">
-                {keyPair ? "Disponibles" : "No generadas"}
+                {keyPair?.privateKey ? "Disponibles" : "No generadas"}
               </dd>
             </div>
             <div>
@@ -93,7 +98,7 @@ export function FileSigningPanel() {
             open={dialogOpen}
             onOpenChange={setDialogOpen}
             title="¿Firmar el archivo médico?"
-            description="Se generará un hash SHA-256 y una firma digital simulada como archivo .sig separado. El archivo original no se modifica."
+            description="Se calculará el hash SHA-256 real y se firmará con OpenSSL (dgst -sha256 -sign). El resultado será un archivo .sig separado. El archivo original no se modifica."
             confirmLabel="Firmar archivo"
             pending={mutation.isPending}
             onConfirm={async () => {

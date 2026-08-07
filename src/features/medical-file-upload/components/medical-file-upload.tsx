@@ -140,7 +140,9 @@ export function MedicalFileUpload() {
         {originalFile ? (
           <div className="space-y-4">
             <UploadedFileSummary file={originalFile} />
-            <FilePreview content={originalFile.content} />
+            {originalFile.content ? (
+              <FilePreview content={originalFile.content} />
+            ) : null}
           </div>
         ) : null}
       </CardContent>

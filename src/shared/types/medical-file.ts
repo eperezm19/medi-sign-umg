@@ -11,16 +11,20 @@ export type MedicalFileData = {
   name: string
   mimeType: string
   size: number
+  /** Vista previa de texto (best-effort; PDFs pueden no ser legibles). */
   content: string
+  /** Bytes exactos del archivo en memoria de sesión (no persistir). */
+  bytes: Uint8Array
   uploadedAt: string
 }
 
-export type SimulatedKeyPair = {
+export type KeyPairData = {
   publicKey: string
   privateKey: string
   algorithm: "RSA"
   bits: 2048
   generatedAt: string
+  opensslVersion?: string
 }
 
 export type VerificationOutcome = {
@@ -31,5 +35,9 @@ export type VerificationOutcome = {
   currentHash: string
   hashesMatch: boolean
   isAltered: boolean
+  integrity: "VERIFIED" | "COMPROMISED"
   verifiedAt: string
 }
+
+/** @deprecated Use KeyPairData */
+export type SimulatedKeyPair = KeyPairData

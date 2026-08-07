@@ -55,8 +55,8 @@ export function KeyDisplay({
       </div>
 
       <AcademicWarning>
-        La llave privada se presenta únicamente para fines académicos. En un
-        sistema real debe permanecer bajo control exclusivo del firmante.
+        La llave privada se proporciona únicamente para fines académicos y no
+        debe compartirse en un entorno real.
       </AcademicWarning>
     </div>
   )

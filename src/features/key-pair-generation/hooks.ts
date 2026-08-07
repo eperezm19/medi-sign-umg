@@ -20,7 +20,7 @@ export function useKeyPairQuery() {
   })
 }
 
-export function useGenerateKeyPairMutation() {
+export function useGenerateKeysMutation() {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -28,10 +28,13 @@ export function useGenerateKeyPairMutation() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.keyPair })
       await queryClient.invalidateQueries({ queryKey: queryKeys.signature })
-      toast.success("Par de llaves RSA generado")
+      toast.success("Par de llaves RSA generado con OpenSSL")
     },
-    onError: () => {
-      toast.error("No se pudieron generar las llaves")
+    onError: (error: Error) => {
+      toast.error(error.message || "No se pudieron generar las llaves")
     },
   })
 }
+
+/** @deprecated Use useGenerateKeysMutation */
+export const useGenerateKeyPairMutation = useGenerateKeysMutation

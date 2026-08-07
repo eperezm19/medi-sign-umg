@@ -5,6 +5,7 @@ import { toast } from "sonner"
 
 import {
   fetchOriginalVerification,
+  verifyFile,
   verifyOriginalFile,
 } from "@/features/original-file-verification/api"
 import { queryKeys } from "@/shared/api/query-keys"
@@ -20,6 +21,30 @@ export function useOriginalVerificationQuery() {
   })
 }
 
+export function useVerifyFileMutation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: verifyFile,
+    onSuccess: async (result) => {
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.originalVerification,
+      })
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.hashComparison,
+      })
+      if (result.valid) {
+        toast.success(result.technicalResult)
+      } else {
+        toast.error(result.technicalResult)
+      }
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "No se pudo verificar el archivo")
+    },
+  })
+}
+
 export function useVerifyOriginalFileMutation() {
   const queryClient = useQueryClient()
 
@@ -32,7 +57,11 @@ export function useVerifyOriginalFileMutation() {
       await queryClient.invalidateQueries({
         queryKey: queryKeys.hashComparison,
       })
-      toast.success(result.technicalResult)
+      if (result.valid) {
+        toast.success(result.technicalResult)
+      } else {
+        toast.error(result.technicalResult)
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message || "No se pudo verificar el archivo")
